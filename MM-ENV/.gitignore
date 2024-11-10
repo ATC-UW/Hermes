@@ -1,0 +1,14 @@
+__pycache__/
+log/*.log
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.DS_Store
+.env
+.vscode/
+.idea/
+*.egg-info/
+dist/
+build/
+env/
