@@ -42,9 +42,6 @@ async def upload_files(
             name=container_name
         )
 
-        exit_code, file_paths_output = container.exec_run("ls -R /app")
-        print(file_paths_output.decode())
-
         src_maker = UPLOAD_FOLDER / "maker.py"
         maker_tar = create_tar_archive(src_maker, 'maker.py')
         with open(maker_tar, 'rb') as tar:
