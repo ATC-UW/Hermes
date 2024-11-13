@@ -4,13 +4,19 @@ from fastapi.responses import JSONResponse
 import docker
 import tarfile
 import uuid
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
-client = docker.DockerClient(base_url='tcp://localhost:2375')
+client = docker.from_env()
+
 UPLOAD_FOLDER = Path("uploads")
-MM_ENV_FOLDER = Path("MM-ENV")
+MM_ENV_FOLDER = Path("MM-game-skeleton")
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
 def create_tar_archive(src_path: Path, arcname: str):
@@ -18,6 +24,15 @@ def create_tar_archive(src_path: Path, arcname: str):
     with tarfile.open(tar_path, "w") as tar:
         tar.add(src_path, arcname=arcname)
     return tar_path
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+@app.get("/container-list")
+async def container_list():
+    containers = client.containers.list(all=True)
+    return [c.name for c in containers]
 
 @app.post("/upload-files")
 async def upload_files(
@@ -35,8 +50,11 @@ async def upload_files(
 
     try:
         container_name = f"mm-env-container-{uuid.uuid4()}"
+        if not client.images.list(name="mm-game:latest"):
+            print("Building image")
+            client.images.pull("kipiiler75/mm-game")
         container = client.containers.run(
-            "mm-env",
+            "kipiiler75/mm-game",
             detach=True,
             tty=True,
             name=container_name
@@ -59,7 +77,7 @@ async def upload_files(
             return JSONResponse({"error": "Failed to install dependencies", "details": output.decode()}, status_code=500)
         
         for i in range(10):
-            exit_code, output = container.exec_run("python /app/main.py")
+            exit_code, output = container.exec_run("python /app/main.py -f")
             if exit_code != 0:
                 container.stop()
                 container.remove()

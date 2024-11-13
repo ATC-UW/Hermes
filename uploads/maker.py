@@ -39,7 +39,7 @@ class MarketMaker(ABC):
     while the ask price describes the lowest level at which a seller is willing to sell their shares
     """
     @abstractmethod
-    def update(self, prev_bid_price, prev_ask_price, timestamp) -> Tuple[float, int, float, int, OrderType]:
+    def update(self, prev_bid_price, prev_ask_price, holding, money, timestamp) -> Tuple[float, int, float, int, OrderType]:
         """
         Update the market maker with the previous bid and ask prices, and the timestamp of the current interval,
         and return the new bid and ask prices, and the volume to buy and sell
@@ -61,6 +61,8 @@ class MarketMaker(ABC):
 
         :param prev_bid_price: the previous bid price
         :param prev_ask_price: the previous ask price
+        :param holding: the number of stocks you are holding from previous interval
+        :param money: the amount of money you have from previous interval
         :param timestamp: the timestamp of the current (not previous) interval
 
         :return: a tuple containing the new bid price limit, the volume to buy, the new ask price limit, 
@@ -76,7 +78,7 @@ class SimpleMarketMaker(MarketMaker):
              pass
         
         # TODO: Replace this example with your strategy
-        def update(self, prev_bid_price, prev_ask_price, timestamp) -> Tuple[float, int, float, int, OrderType]:
+        def update(self, prev_bid_price, prev_ask_price, holding, money, timestamp) -> Tuple[float, int, float, int, OrderType]:
             """
             Example on how to implement the update method for the market maker.
 
@@ -94,6 +96,8 @@ class SimpleMarketMaker(MarketMaker):
 
             :param prev_bid_price: the previous bid price
             :param prev_ask_price: the previous ask price
+            :param holding: the number of stocks you are holding from previous interval
+            :param money: the amount of money you have from previous interval
             :param timestamp: the timestamp of the current (not previous) interval
 
             :return: a tuple containing the new bid price limit, the volume to buy, the new ask price limit,
