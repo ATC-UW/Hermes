@@ -1,7 +1,6 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
-
-import docker
+from fastapi.middleware.cors import CORSMiddleware
 
 from service.db import add_user_to_leaderboard, get_leaderboard
 from service.constant import UPLOAD_FOLDER
@@ -10,7 +9,18 @@ from service.docker import container_halt, find_container, run_container_game
 
 app = FastAPI()
 
-client = docker.from_env()
+origins = [
+    "*",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,          # Allows requests from this origin
+    allow_credentials=True,
+    allow_methods=["*"],            # Allows all HTTP methods
+    allow_headers=["*"],            # Allows all headers
+)
+
 
 @app.get("/")
 async def root():
