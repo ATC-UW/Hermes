@@ -40,6 +40,12 @@ def find_container(name: str):
     return container
 
 def run_container_game(name: str):
+    try:
+        docker_client.images.get("kipiiler75/mm-game")
+        print("Image already exists")
+    except docker.errors.ImageNotFound:
+        docker_client.images.pull("kipiiler75/mm-game")
+
     container_name = f"mm-env-container-{name}"
     container = docker_client.containers.run(
         "kipiiler75/mm-game",
