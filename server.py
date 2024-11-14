@@ -16,9 +16,11 @@ client = docker.from_env()
 async def root():
     return {"message": "Hello World"}
 
-@app.post("/leaderboard")
+@app.get("/leaderboard")
 async def leaderboard():
-    leaderboard = get_leaderboard()
+    result = get_leaderboard()
+    data = result.data
+    leaderboard = [{ "time": row["created_at"], "name": row["name"], "score": row["score"]} for row in data]
     return JSONResponse({"leaderboard": leaderboard}, status_code=200)
 
 
