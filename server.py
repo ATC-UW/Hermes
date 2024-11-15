@@ -45,6 +45,7 @@ async def upload_files(
     if "maker.py" not in filenames or "requirements.txt" not in filenames:
         return JSONResponse({"error": "Incorrect files"}, status_code=404)
 
+    name = "".join(name.split())
     upload_path = UPLOAD_FOLDER / name
     upload_path.mkdir(parents=True, exist_ok=True)
 
